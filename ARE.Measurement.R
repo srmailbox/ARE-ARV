@@ -23,15 +23,13 @@ areRaw = xlData %>% select(ParticipantID, Grade, Age, starts_with("ARE_Item")) %
 
 if (FALSE) {
   str(areRaw)
-  psych::describe(areRaw %>% select(-ParticipantID, -ARE_Item15))
+  psych::describe(areRaw %>% select(starts_with("ARE"), -ARE_Item15))
   # Skewed Items (all positive):
   #   2, 13, 14, (4) (5)
   # Kurtosis: everything except 4,5,13
   #   all negative, except 2, and 14
-  # Item 14 is alarmingly non-normal. 
+  # Item 14 is alarmingly non-normal.
   areRaw %>% ggplot(aes(x=ARE_Item14)) + geom_histogram()
-  areRaw %>% ggplot(aes(x=ARE_Item14, y=Grade, group = Grade)) + geom_boxplot()
-  
   # ok, there's no transformation that is going to make this normal.
   # Maybe we just accept that it's non-normal and treat it differently
   # Or that it's kind of a poisson distribution of some sort perhaps? Truncated?
