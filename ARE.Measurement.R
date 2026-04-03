@@ -284,6 +284,8 @@ semPaths(AREWiL.sem, whatLabel="est", intercepts = F)
 
 ## 4.4 what about the EFA model ####
 ## This is based on the 10 item EFA
+## Each item is loaded om the factor where it was most strongly loaded,
+## except Items 6 & 15 which are loaded on two factors each.
 areEFAmodel = '
 F1 =~ ARE_Item1 + ARE_Item6 + ARE_Item8 + ARE_Item10 + ARE_Item12 + ARE_Item15
 F2am =~ ARE_Item13 + ARE_Item14 + ARE_Item15
