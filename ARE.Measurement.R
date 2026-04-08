@@ -19,7 +19,7 @@ include(lavaan)
 include(semPlot)
 
 # 1.0 Data ####
-xlData = read_excel('270326WiL_HS_fulldata.xlsx', sheet="Data", na=c("NA", "ND"))
+xlData = read_excel('../270326WiL_HS_fulldata.xlsx', sheet="Data", na=c("NA", "ND"))
 areRaw = xlData %>% select(ParticipantID, Grade, Age, starts_with("ARE_Item")) %>% 
   mutate(ARE_Item15 = factor(ARE_Item15))
 
