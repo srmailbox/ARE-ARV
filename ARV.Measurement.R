@@ -2,7 +2,7 @@
 # Assessment of Reading Values
 # 
 # We have some data from a set of items designed to measure reading
-# va;ies/
+# values.
 # 
 # This is the first time it has been used, so we need to do some basic
 # item and measurement work.
