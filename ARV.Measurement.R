@@ -267,12 +267,12 @@ cbind(ARV10=fitmeasures(ARV10.sem), ARVEFA=fitmeasures(ARVEFA.sem)) %>% round(3)
 # how do things fit if each item is only allowed to load on a single factor
 
 arvEFApure = '
-F1 =~ ARV_Item1 + ARV_Item2 + ARV_Item3 + ARV_Item10
-F2 =~ ARV_Item6 + ARV_Item9
-F3 =~ ARV_Item7 + ARV_Item8
-F4 =~ ARV_Item4 + ARV_Item5
+IndependentV =~ ARV_Item1 + ARV_Item2 + ARV_Item3 + ARV_Item10
+AffectV =~ ARV_Item6 + ARV_Item9
+LearningV =~ ARV_Item7 + ARV_Item8
+SocialV =~ ARV_Item4 + ARV_Item5
 
-RE =~ F1 + F2 + F3 + F4
+GeneralV =~ IndependentV + AffectV + LearningV + SocialV
 '
 
 ARVEFApure.sem = sem(arvEFApure, arvZ, std.lv = T, missing="fiml")
