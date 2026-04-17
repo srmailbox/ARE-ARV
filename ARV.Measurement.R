@@ -55,7 +55,7 @@ arvZ = arvRaw %>% mutate(across(starts_with("ARV_"), ~scale(.)[,1]))
 
 ## 2.1 Overall Test Cronbach's ####
 
-(ARV15.alpha = alpha(arvZ %>% select(starts_with("ARV_Item"))))
+(ARV10.alpha = alpha(arvZ %>% select(starts_with("ARV_Item"))))
 
 # Outstanding. Alpha of .94, no weird items. Item 9 is the only item that is a
 # bit weaker on r.drop, but it's really not an issue.
@@ -168,78 +168,6 @@ princomp(arvZ%>% select(starts_with("ARV_Item")) %>% drop_na()) %>% loadings
 # WiL structure.  I'll do this two ways, once with the reverse-coded, and once
 # without.
 
-## 4.1 Full set of items ARV ####
-
-arv15model = '
-AM =~ ARV_Item13 + ARV_Item14 + ARV_Item15
-AV =~ ARV_Item4 + ARV_Item8 + ARV_Item12
-IN =~ ARV_Item1 + ARV_Item5 + ARV_Item9
-PE =~ ARV_Item2 + ARV_Item6 + ARV_Item10
-VA =~ ARV_Item3 + ARV_Item7 + ARV_Item11
-
-RE =~ AM + AV + IN + PE + VA
-
-# Need to constrain the residual variance of Item 1 to be positive
-# but left very small to recognize that this is what the model wanted (non-sig
-# but negative)
-ARV_Item1~~.01*ARV_Item1
-'
-
-ARV15.sem = sem(arv15model, arvZ, orthogonal = T, std.lv=T, missing="fiml")
-semPaths(ARV15.sem, whatLabel="est", intercept=F)
-
-# Ok, so there's a lot of funny stuff happening here.
-# moderately ok fits, SRMR/RMSEA in the .09ish range, CFI, AGFI, TLI around .8
-
-## 4.2 Remove Reverse-Coded items ARV10 ####
-
-arv10model = '
-AM =~ ARV_Item13 + ARV_Item14 + ARV_Item15
-AV =~ ARV_Item8 + ARV_Item12
-IN =~ ARV_Item1
-PE =~ ARV_Item6 + ARV_Item10
-VA =~ ARV_Item3 + ARV_Item11
-
-RE =~ AM + AV + IN + PE + VA
-
-
-'
-
-ARV10.sem = sem(arv10model, arvZ, orthogonal = T, std.lv=T, missing="fiml"
-                , meanstructure = F)
-semPaths(ARV10.sem, whatLabel="est", intercepts = F)
-
-# This fits quite well.
-# SRMR, RMSEA in the .06 range, TLI, CFI, AGFI all above .9
- 
-
-## 4.3 Use the structure implied by the WiL structure based reliabilities ####
-
-arvWiLmodel = '
-AM =~ ARV_Item13 + ARV_Item15
-IN =~ ARV_Item5 + ARV_Item9
-PE =~ ARV_Item6 + ARV_Item10
-VA =~ ARV_Item3 + ARV_Item11
-
-# For some reason, the AV component really breaks here which is consistent with
-# the other models  where it produces a nonsignificant set of weights for the
-# items, but then has a massive weight from RE which is also non-significant
-#AV =~ ARV_Item8 + ARV_Item12
-
-RE =~ AM + IN + PE + VA# + AV 
-
-# Need to constrain the residual variance of Item 5 to be positive
-# but left very small to recognize that this is what the model wanted (non-sig
-# but negative)
-ARV_Item5~~.01*ARV_Item5
-'
-
-ARVWiL.sem = sem(arvWiLmodel, arvZ, std.lv=T, missing="fiml")
-semPaths(ARVWiL.sem, whatLabel="est", intercepts = F)
-
-# This fits quite well.
-# SRMR, RMSEA in the .06 range, TLI, CFI, AGFI all above .9
-
 ## 4.4 what about the EFA model ####
 
 ## Each item is loaded om the factor where it was most strongly loaded,
@@ -257,9 +185,7 @@ ARVEFA.sem = sem(arvEFAmodel, arvZ, std.lv = T, missing="fiml")
 summary(ARVEFA.sem)
 semPaths(ARVEFA.sem, whatLabel="est", intercept = F)
 
-# Comparv that to the 15 item WiL structure
-# anova(ARV10.sem, ARVEFA.sem)
-cbind(ARV10=fitmeasures(ARV10.sem), ARVEFA=fitmeasures(ARVEFA.sem)) %>% round(3)
+(ARVEFA=fitmeasures(ARVEFA.sem, c("tli", "cfi", "srmr", "rmsea"))) %>% round(3)
 
 # So the EFA "promax" structure fits super well.
 
@@ -283,8 +209,12 @@ anova(ARVEFApure.sem, ARVEFA.sem)
 
 # ok, os that does significantly damage the fit.
 cbind(
-  Pure=fitmeasures(ARVEFApure.sem, fit.measures = c("cfi", "tli", "agfi", "srmr", "rmsea"))
-  , Flex=fitmeasures(ARVEFA.sem, fit.measures = c("cfi", "tli", "agfi", "srmr", "rmsea"))
+  Pure=fitmeasures(ARVEFApure.sem, fit.measures = c("cfi", "tli", "srmr", "rmsea"))
+  , Flex=fitmeasures(ARVEFA.sem, fit.measures = c("cfi", "tli", "srmr", "rmsea"))
   ) %>% round(3)
 
 # RMSEA becomes unappy.
+# 
+ # 5.0 alpha of "Independence Value" subscale ####
+ 
+psych::alpha(arvZ %>% select(ARV_Item1:ARV_Item3, ARV_Item10))
